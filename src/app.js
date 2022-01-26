@@ -166,10 +166,11 @@ App = {
     },
 
     buyProduct: async (e) => {
-        App.setLoading(true);
+        // App.setLoading(true);
         const productId = e.target.name;
         const product = await App.auction.products(productId);
-        await App.auction.buyProduct(productId, {from: App.account, value: product["bid"]});
+        // console.log(product["owner"]);
+        await App.auction.buyProduct(productId, product["owner"].toLowerCase(), {from: App.account, value: product["bid"]});
         window.location.reload();
     },
 
@@ -193,7 +194,15 @@ $(() => {
     })
 });
 
-// TODO: test event
+
+
+
+
+
+
+
+
+// TODO: test events
 // TODO: don't allow to create expired product
 // TODO: check offer expiration time is > today use block.timestamp
 // TODO: rename from everywhere task keyword

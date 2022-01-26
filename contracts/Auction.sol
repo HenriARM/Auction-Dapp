@@ -61,11 +61,13 @@ contract Auction {
         emit TaskCompleted(id, product.isClosed);
     }
 
-    function buyProduct(uint id) public payable {
+    function buyProduct(uint id, address payable owner) public payable {
         Product memory product = products[id];
         require(product.isClosed == true, "Offer is not closed yet");
         require(product.bid == msg.value, "Incorrect sent money");
         product.isPayed = !product.isPayed;
+        // send money to the product owner
+        owner.transfer(product.bid);
         products[id] = product;
         emit TaskCompleted(id, product.isPayed);
     }
