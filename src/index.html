@@ -60,10 +60,10 @@
             <form id="nameform" onSubmit="App.postProduct(); return false;">
               <label for="newDescription">Product:</label>
               <input id="newDescription" type="text" class="form-control" required>
-              <label for="newPrice">Starting price:</label> <output>1</output>
+              <label for="newPrice">Starting price:</label> <output>1</output> wei
               <input type="range" id="newPrice" name="newPrice" min="1" max="1000000" class="form-control" required
                      oninput="this.previousElementSibling.value = this.value">
-              <label for="newTime">Expiration datetime:</label>
+              <label for="newTime">Offer expiration datetime:</label>
               <input id="newTime" type="datetime-local" name="lname" class="form-control" required>
               <!--<input type="submit">-->
               <button type="submit" form="nameform" value="Submit" class="form-control">Create</button>

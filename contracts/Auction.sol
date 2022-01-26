@@ -42,7 +42,7 @@ contract Auction {
             msg.sender,
             startPrice,
             startPrice, // bid starts from Startprice
-            0,
+            datetime,
             false);
         emit TaskCreated(productCount, description, false);
     }
@@ -66,3 +66,5 @@ contract Auction {
     // TODO: use block.timestamp for current  time
 
 }
+
+// TODO: check offer expiration time is > today

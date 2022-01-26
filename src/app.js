@@ -41,7 +41,6 @@ App = {
     loadAccount: async () => {
         const account = await ethereum.request({method: 'eth_requestAccounts'});
         App.account = account[0];
-        console.log(App.account);
     },
 
     loadContract: async () => {
@@ -98,6 +97,7 @@ App = {
             }
             console.log(msg);
             $newTaskTemplate.find('.content').html(msg);
+            // TODO: bid, close, pay price
             $newTaskTemplate.find('input')
                 .prop("name", productRow["id"])
                 .prop("checked", productRow["completed"])
