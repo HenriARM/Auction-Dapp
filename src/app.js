@@ -112,19 +112,19 @@ App = {
                 .on("click", App.buyProduct);
 
             // show close button to product creator and bid to others
-            if (App.account === product["owner"].toLowerCase()) {
-                if (!product["isClosed"]) {
+            if (!product["isClosed"]) {
+                if (App.account === product["owner"].toLowerCase()) {
                     $newTaskTemplate.find(".closeproduct").show();
+                } else {
+                    $newTaskTemplate.find('.bidproduct')
+                        .prop("value", productRow["bid"])
+                        .show();
                 }
             } else {
-                $newTaskTemplate.find('.bidproduct')
-                    .prop("value", productRow["bid"])
-                    .show();
-            }
-
-            // show buy button if it is closed (and we are not owners)
-            if (product["isClosed"] && !product["isPayed"]) {
-                $newTaskTemplate.find(".buyproduct").show();
+                // show buy button if it is closed (and we are not owners)
+                if (!product["isPayed"]) {
+                    $newTaskTemplate.find(".buyproduct").show();
+                }
             }
 
             // Put the task in the correct list
@@ -170,7 +170,10 @@ App = {
         const productId = e.target.name;
         const product = await App.auction.products(productId);
         // console.log(product["owner"]);
-        await App.auction.buyProduct(productId, product["owner"].toLowerCase(), {from: App.account, value: product["bid"]});
+        await App.auction.buyProduct(productId, product["owner"].toLowerCase(), {
+            from: App.account,
+            value: product["bid"]
+        });
         window.location.reload();
     },
 
@@ -193,13 +196,6 @@ $(() => {
         App.load();
     })
 });
-
-
-
-
-
-
-
 
 
 // TODO: test events
