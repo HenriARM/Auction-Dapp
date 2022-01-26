@@ -10,8 +10,7 @@ contract Auction {
         uint startPrice;
         uint bid;
         uint datetime;
-        //    TODO: status of product
-        bool completed;
+        bool isOpened;
     }
 
     mapping(uint => Product) public products;
@@ -20,12 +19,12 @@ contract Auction {
     event TaskCreated(
         uint id,
         string content,
-        bool completed
+        bool isOpened
     );
 
     event TaskCompleted(
         uint id,
-        bool completed
+        bool isOpened
     );
 
     constructor() public {
@@ -51,7 +50,14 @@ contract Auction {
         Product memory product = products[id];
         product.bid = product.bid + 100;
         products[id] = product;
-        emit TaskCompleted(id, product.completed);
+        emit TaskCompleted(id, product.isOpened);
+    }
+
+    function closeProduct(uint id) public {
+        Product memory product = products[id];
+        product.isOpened = !product.isOpened;
+        products[id] = product;
+        emit TaskCompleted(id, product.isOpened);
     }
 
     //  function showSender() public view returns (address) {

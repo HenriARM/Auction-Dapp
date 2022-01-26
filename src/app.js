@@ -84,11 +84,12 @@ App = {
                 "startPrice": product[3].toNumber(),
                 "bid": product[4].toNumber(),
                 "datetime": product[5].toNumber(),
-                "taskCompleted": product[6]
+                "isOpened": product[6]
             };
             // Create the html for the task
             const $newTaskTemplate = $taskTemplate.clone();
-            const productRow = product;
+            // clone product
+            const productRow = JSON.parse(JSON.stringify(product));
             const addrLen = productRow["owner"].length;
             productRow["owner"] = "#..." + productRow["owner"].slice(addrLen - 8, addrLen);
             let msg = "";
@@ -96,14 +97,24 @@ App = {
                 msg += `${key}: ${productRow[key]} | `;
             }
             console.log(msg);
-            $newTaskTemplate.find('.content').html(msg);
-            $newTaskTemplate.find('.bidproduct')
+            $newTaskTemplate.find(".content").html(msg);
+            $newTaskTemplate.find(".bidproduct")
                 .prop("name", productRow["id"])
-                // .prop("checked", productRow["completed"])
                 .on("click", App.bidProduct);
 
+            $newTaskTemplate.find(".closeproduct")
+                .prop("name", productRow["id"])
+                .on("click", App.closeProduct);
+
+            // show close button to product creator and bid to others
+            if (App.account === product["owner"].toLowerCase()) {
+                $newTaskTemplate.find(".closeproduct").show();
+            } else {
+                $newTaskTemplate.find('.bidproduct').show();
+            }
+
             // Put the task in the correct list
-            if (productRow["completed"]) {
+            if (productRow["isOpened"]) {
                 $('#completedTaskList').append($newTaskTemplate)
             } else {
                 $('#taskList').append($newTaskTemplate)
@@ -125,10 +136,18 @@ App = {
     },
 
     bidProduct: async (e) => {
-        // App.setLoading(true);
-        console.log(e);
+        console.log('hello');
+        App.setLoading(true);
         const productId = e.target.name;
         await App.auction.bidProduct(productId, {from: App.account});
+        window.location.reload();
+    },
+
+    closeProduct: async (e) => {
+        App.setLoading(true);
+        const productId = e.target.name;
+        console.log(productId);
+        await App.auction.closeProduct(productId, {from: App.account});
         window.location.reload();
     },
 
@@ -152,12 +171,10 @@ $(() => {
     })
 });
 
-// TODO: can't buy when auction is not yet finished
+// TODO: rename from everywhere task keyword
 // TODO: can't buy your own product
-// TODO: for logs - console.log(JSON.stringify(product));
 // TODO: create html tables insted of msg
 // TODO: send specific product id
 // const pay = await App.auction.buyProduct
 // ({from: App.account, value: bidPrice});
-
 // TODO: can also be timeout of deal and nobody ordered (the last one who did bid)
