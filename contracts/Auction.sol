@@ -6,7 +6,7 @@ contract Auction {
     struct Product {
         uint id;
         string description;
-        address owner;
+        address payable owner;
         uint startPrice;
         uint bid;
         uint datetime;
@@ -16,15 +16,24 @@ contract Auction {
 
     mapping(uint => Product) public products;
 
-    event TaskCreated(
+    event ProductCreated(
         uint id,
-        string content,
+        string description
+    );
+
+    event ProductBid(
+        uint id,
+        uint price
+    );
+
+    event ProductClosed(
+        uint id,
         bool isClosed
     );
 
-    event TaskCompleted(
+    event ProductBought(
         uint id,
-        bool isClosed
+        bool isBought
     );
 
     constructor() public {
@@ -44,32 +53,32 @@ contract Auction {
             datetime,
             false,
             false);
-        emit TaskCreated(productCount, description, false);
+        emit ProductCreated(productCount, description);
     }
 
     function bidProduct(uint id) public {
         Product memory product = products[id];
         product.bid = product.bid + 100;
         products[id] = product;
-        emit TaskCompleted(id, product.isClosed);
+        emit ProductBid(id, product.bid);
     }
 
     function closeProduct(uint id) public {
         Product memory product = products[id];
         product.isClosed = !product.isClosed;
         products[id] = product;
-        emit TaskCompleted(id, product.isClosed);
+        emit ProductClosed(id, product.isClosed);
     }
 
-    function buyProduct(uint id, address payable owner) public payable {
+    function buyProduct(uint id) public payable {
         Product memory product = products[id];
         require(product.isClosed == true, "Offer is not closed yet");
         require(product.bid == msg.value, "Incorrect sent money");
-        product.isPayed = !product.isPayed;
         // send money to the product owner
-        owner.transfer(product.bid);
+        product.owner.transfer(msg.value);
+        product.isPayed = !product.isPayed;
         products[id] = product;
-        emit TaskCompleted(id, product.isPayed);
+        emit ProductBought(id, product.isPayed);
     }
 
     //    require(msg.value == 1.0, "Incorrect amount");

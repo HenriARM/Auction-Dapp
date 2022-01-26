@@ -170,7 +170,7 @@ App = {
         const productId = e.target.name;
         const product = await App.auction.products(productId);
         // console.log(product["owner"]);
-        await App.auction.buyProduct(productId, product["owner"].toLowerCase(), {
+        await App.auction.buyProduct(productId, {
             from: App.account,
             value: product["bid"]
         });
