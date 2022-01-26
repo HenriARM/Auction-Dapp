@@ -97,11 +97,10 @@ App = {
             }
             console.log(msg);
             $newTaskTemplate.find('.content').html(msg);
-            // TODO: bid, close, pay price
-            $newTaskTemplate.find('input')
+            $newTaskTemplate.find('.bidproduct')
                 .prop("name", productRow["id"])
-                .prop("checked", productRow["completed"])
-                .on("click", App.toggleCompleted);
+                // .prop("checked", productRow["completed"])
+                .on("click", App.bidProduct);
 
             // Put the task in the correct list
             if (productRow["completed"]) {
@@ -125,10 +124,11 @@ App = {
         window.location.reload();
     },
 
-    toggleCompleted: async (e) => {
-        App.setLoading(true);
-        const taskId = e.target.name;
-        await App.auction.toggleCompleted(taskId, {from: App.account});
+    bidProduct: async (e) => {
+        // App.setLoading(true);
+        console.log(e);
+        const productId = e.target.name;
+        await App.auction.bidProduct(productId, {from: App.account});
         window.location.reload();
     },
 
@@ -152,9 +152,12 @@ $(() => {
     })
 });
 
+// TODO: can't buy when auction is not yet finished
 // TODO: can't buy your own product
 // TODO: for logs - console.log(JSON.stringify(product));
 // TODO: create html tables insted of msg
 // TODO: send specific product id
 // const pay = await App.auction.buyProduct
-// ({from: App.account, value: Math.pow(10, 0)});
+// ({from: App.account, value: bidPrice});
+
+// TODO: can also be timeout of deal and nobody ordered (the last one who did bid)

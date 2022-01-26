@@ -47,11 +47,11 @@ contract Auction {
         emit TaskCreated(productCount, description, false);
     }
 
-    function toggleCompleted(uint _id) public {
-        Product memory _task = products[_id];
-        _task.completed = !_task.completed;
-        products[_id] = _task;
-        emit TaskCompleted(_id, _task.completed);
+    function bidProduct(uint id) public {
+        Product memory product = products[id];
+        product.bid = product.bid + 100;
+        products[id] = product;
+        emit TaskCompleted(id, product.completed);
     }
 
     //  function showSender() public view returns (address) {
