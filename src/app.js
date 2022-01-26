@@ -194,8 +194,8 @@ $(() => {
 });
 
 // TODO: test event
+// TODO: don't allow to create expired product
 // TODO: check offer expiration time is > today use block.timestamp
 // TODO: rename from everywhere task keyword
-// TODO: can't buy your own product
 // TODO: create html tables insted of msg
 // TODO: can also be timeout of deal and nobody ordered (the last one who did bid)
