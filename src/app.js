@@ -84,7 +84,8 @@ App = {
                 "startPrice": product[3].toNumber(),
                 "bid": product[4].toNumber(),
                 "datetime": product[5].toNumber(),
-                "isOpened": product[6]
+                "isClosed": product[6],
+                "isPayed": product[7]
             };
             // Create the html for the task
             const $newTaskTemplate = $taskTemplate.clone();
@@ -106,18 +107,33 @@ App = {
                 .prop("name", productRow["id"])
                 .on("click", App.closeProduct);
 
+            $newTaskTemplate.find(".buyproduct")
+                .prop("name", productRow["id"])
+                .on("click", App.buyProduct);
+
             // show close button to product creator and bid to others
             if (App.account === product["owner"].toLowerCase()) {
-                $newTaskTemplate.find(".closeproduct").show();
+                if (!product["isClosed"]) {
+                    $newTaskTemplate.find(".closeproduct").show();
+                }
             } else {
-                $newTaskTemplate.find('.bidproduct').show();
+                $newTaskTemplate.find('.bidproduct')
+                    .prop("value", productRow["bid"])
+                    .show();
+            }
+
+            // show buy button if it is closed (and we are not owners)
+            if (product["isClosed"] && !product["isPayed"]) {
+                $newTaskTemplate.find(".buyproduct").show();
             }
 
             // Put the task in the correct list
-            if (productRow["isOpened"]) {
-                $('#completedTaskList').append($newTaskTemplate)
+            if (!productRow["isClosed"]) {
+                $('#openedProductList').append($newTaskTemplate);
+            } else if (product["isClosed"] && !product["isPayed"]) {
+                $('#closedProductList').append($newTaskTemplate);
             } else {
-                $('#taskList').append($newTaskTemplate)
+                $('#payedProductList').append($newTaskTemplate)
             }
             // Show the task
             $newTaskTemplate.show()
@@ -136,7 +152,6 @@ App = {
     },
 
     bidProduct: async (e) => {
-        console.log('hello');
         App.setLoading(true);
         const productId = e.target.name;
         await App.auction.bidProduct(productId, {from: App.account});
@@ -146,8 +161,15 @@ App = {
     closeProduct: async (e) => {
         App.setLoading(true);
         const productId = e.target.name;
-        console.log(productId);
         await App.auction.closeProduct(productId, {from: App.account});
+        window.location.reload();
+    },
+
+    buyProduct: async (e) => {
+        App.setLoading(true);
+        const productId = e.target.name;
+        const product = await App.auction.products(productId);
+        await App.auction.buyProduct(productId, {from: App.account, value: product["bid"]});
         window.location.reload();
     },
 
@@ -171,10 +193,9 @@ $(() => {
     })
 });
 
+// TODO: test event
+// TODO: check offer expiration time is > today use block.timestamp
 // TODO: rename from everywhere task keyword
 // TODO: can't buy your own product
 // TODO: create html tables insted of msg
-// TODO: send specific product id
-// const pay = await App.auction.buyProduct
-// ({from: App.account, value: bidPrice});
 // TODO: can also be timeout of deal and nobody ordered (the last one who did bid)

@@ -35,7 +35,7 @@
         margin-bottom: 0px;
       }
 
-      #completedTaskList .content {
+      #payedProductList .content {
         color: grey;
         text-decoration: line-through;
       }
@@ -70,8 +70,8 @@
             </form>
 
 
-            <span> Products: </span>
-            <ol id="taskList" class="list-unstyled">
+            <span> Opened offers: </span>
+            <ol id="openedProductList" class="list-unstyled">
               <div class="taskTemplate" class="checkbox" style="display: none">
                 <label>
                   <!--<input type="checkbox" />-->
@@ -82,9 +82,10 @@
                 </label>
               </div>
             </ol>
-            <span> Sold out  </span>
-            <ol id="completedTaskList" class="list-unstyled">
-            </ol>
+            <span> Closed offers:  </span>
+            <ol id="closedProductList" class="list-unstyled"></ol>
+            <span> Payed offers:  </span>
+            <ol id="payedProductList" class="list-unstyled"></ol>
           </div>
         </main>
       </div>

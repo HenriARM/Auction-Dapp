@@ -10,21 +10,21 @@ contract Auction {
         uint startPrice;
         uint bid;
         uint datetime;
-        bool isOpened;
+        bool isClosed;
+        bool isPayed;
     }
 
     mapping(uint => Product) public products;
 
-    //  TODO: test event
     event TaskCreated(
         uint id,
         string content,
-        bool isOpened
+        bool isClosed
     );
 
     event TaskCompleted(
         uint id,
-        bool isOpened
+        bool isClosed
     );
 
     constructor() public {
@@ -33,7 +33,7 @@ contract Auction {
     }
 
     function postProduct(string memory description, uint startPrice, uint datetime)
-     public payable {
+    public payable {
         productCount ++;
         products[productCount] = Product(
             productCount,
@@ -42,6 +42,7 @@ contract Auction {
             startPrice,
             startPrice, // bid starts from Startprice
             datetime,
+            false,
             false);
         emit TaskCreated(productCount, description, false);
     }
@@ -50,27 +51,28 @@ contract Auction {
         Product memory product = products[id];
         product.bid = product.bid + 100;
         products[id] = product;
-        emit TaskCompleted(id, product.isOpened);
+        emit TaskCompleted(id, product.isClosed);
     }
 
     function closeProduct(uint id) public {
         Product memory product = products[id];
-        product.isOpened = !product.isOpened;
+        product.isClosed = !product.isClosed;
         products[id] = product;
-        emit TaskCompleted(id, product.isOpened);
+        emit TaskCompleted(id, product.isClosed);
     }
 
+    function buyProduct(uint id) public payable {
+        Product memory product = products[id];
+        require(product.isClosed == true, "Offer is not closed yet");
+        require(product.bid == msg.value, "Incorrect sent money");
+        product.isPayed = !product.isPayed;
+        products[id] = product;
+        emit TaskCompleted(id, product.isPayed);
+    }
+
+    //    require(msg.value == 1.0, "Incorrect amount");
     //  function showSender() public view returns (address) {
     //    return (msg.sender);
     //  }
 
-    function buyProduct() public payable {
-        //    require(msg.value == 1.0, "Incorrect amount");
-
-    }
-
-    // TODO: use block.timestamp for current  time
-
 }
-
-// TODO: check offer expiration time is > today
